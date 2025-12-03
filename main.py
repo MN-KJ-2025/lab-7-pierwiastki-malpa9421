@@ -25,7 +25,15 @@ def roots_20(coef: np.ndarray) -> tuple[np.ndarray, np.ndarray] | None:
             - Wektor miejsc zerowych (m,).
         Jeżeli dane wejściowe są niepoprawne funkcja zwraca `None`.
     """
-    pass
+    if not ( isinstance(coef,np.ndarray) ):
+        return None
+    
+    if len(np.shape(coef)) != 1:
+        return None
+    
+    zaburzenie = np.random.random_sample(len(coef))*1e-10
+    e_coef = coef + zaburzenie
+    return (e_coef,nppoly.polyroots(e_coef))
 
 
 def frob_a(coef: np.ndarray) -> np.ndarray | None:
@@ -48,7 +56,17 @@ def frob_a(coef: np.ndarray) -> np.ndarray | None:
         (np.ndarray): Macierz Frobeniusa o rozmiarze (n,n).
         Jeżeli dane wejściowe są niepoprawne funkcja zwraca `None`.
     """
-    pass
+    if not isinstance(coef,np.ndarray):
+        return None
+    
+    if len(coef.shape) != 1 or len(coef) <= 1:
+        return None
+
+    l = len(coef[:-1])
+    jednostkowa = np.identity(l-1)
+    kolumna_zer = np.zeros((l-1,1))
+    wiersz_ostatni = -coef[:-1]/coef[-1]
+    return np.vstack(( np.hstack((kolumna_zer, jednostkowa)), wiersz_ostatni ))
 
 
 def is_nonsingular(A: np.ndarray) -> bool | None:
@@ -63,4 +81,17 @@ def is_nonsingular(A: np.ndarray) -> bool | None:
             wypadku `False`.
         Jeżeli dane wejściowe są niepoprawne funkcja zwraca `None`.
     """
-    pass
+    #sprawdzamy czy macierz jest odwracalna, jak tak, to jest NIEsingularna
+       
+    if not isinstance(A,np.ndarray):
+        return None
+    
+    if not (len(A.shape)==2 and A.shape[0] == A.shape[1]):
+        return None
+
+
+    try:
+        np.linalg.inv(A)
+    except Exception:
+        return False
+    return True
